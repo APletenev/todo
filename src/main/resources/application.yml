@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/todo?characterEncoding=utf8
+    username: postgres
+    password: Vfj6di
+  flyway:
+    url: jdbc:postgresql://localhost:5432/todo?characterEncoding=utf8
+    user: postgres
+    password: Vfj6di
+    enabled: true
+    locations: "classpath:db/migration"
