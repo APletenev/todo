@@ -17,4 +17,9 @@ public class TagController {
         return tagRepository.save(tag);
     }
 
+    @DeleteMapping("/tag/{id}") //удалить запись по id
+    public void delete(@PathVariable Long id) {
+        tagRepository.deleteById(id);
+    }
+
 }
