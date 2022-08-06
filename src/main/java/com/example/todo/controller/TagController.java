@@ -2,13 +2,10 @@ package com.example.todo.controller;
 
 
 import com.example.todo.model.Tag;
-import com.example.todo.model.Task;
 import com.example.todo.repository.TagRepository;
 import com.example.todo.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 public class TagController {
@@ -30,10 +27,8 @@ public class TagController {
 
     @GetMapping("/tag/{id}") //получить один тег по УИД и все его задачи
     public Tag byTagId(@PathVariable Long id) {
-        if (!tagRepository.existsById(id)) return null;
-        Tag tag = tagRepository.findById(id).get();
-        tag.setTasks((List<Task>) taskRepository.getTasksByTask_tag(id));
-        return tag;
+        return tagRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("tag not found"));
     }
+
 
 }

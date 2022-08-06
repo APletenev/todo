@@ -17,7 +17,8 @@ public class Tag {
     @NotBlank
     @NotEmpty
     private String tag_name;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "task_tag")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn (name="task_tag")
     private List<Task> tasks;
 
 }
