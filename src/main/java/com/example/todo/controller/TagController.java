@@ -15,17 +15,32 @@ public class TagController {
     @Autowired
     private TaskRepository taskRepository;
 
-    @PostMapping("/tag") //добавить/изменить тег
+    /**добавить/изменить тег
+     * Создает тег
+     * @param tag тег, который необходимо создать
+     * @return созданный тег
+     */
+    @PostMapping("/tag")
     public Tag create(@RequestBody Tag tag) {
         return tagRepository.save(tag);
     }
 
-    @DeleteMapping("/tag/{id}") //удалить тег со всеми прикрепленными к нему задачами
+    /**
+     * Удаляет тег со всеми прикрепленными к нему задачами
+     * @param id  ид тега для удаления
+     */
+    @DeleteMapping("/tag/{id}")
     public void delete(@PathVariable Long id) {
         tagRepository.deleteById(id);
     }
 
-    @GetMapping("/tag/{id}") //получить один тег по УИД и все его задачи
+    /**
+     * Получает один тег по УИД и все его задачи
+     * @param id УИД искомого тега
+     * @return Найденный тег
+     * @exception IllegalArgumentException В случае, если тег с таким УИД не найден в базе
+     */
+    @GetMapping("/tag/{id}")
     public Tag byTagId(@PathVariable Long id) {
         return tagRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("tag not found"));
     }
