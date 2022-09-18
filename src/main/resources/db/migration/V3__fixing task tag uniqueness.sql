@@ -1,1 +1,0 @@
-drop index task_task_tag_uindex;

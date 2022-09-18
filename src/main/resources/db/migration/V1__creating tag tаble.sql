@@ -6,9 +6,6 @@ create table tag
     tag_name text not null
 );
 
-alter table tag
-    owner to postgres;
-
 create unique index tag_tag_id_uindex
     on tag (tag_id);
 

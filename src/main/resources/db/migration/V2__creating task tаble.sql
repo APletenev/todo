@@ -12,9 +12,6 @@ create table task
 create unique index task_task_id_uindex
     on task (task_id);
 
-create unique index task_task_tag_uindex
-    on task (task_tag);
-
 alter table task
     add constraint task_pk
         primary key (task_id);

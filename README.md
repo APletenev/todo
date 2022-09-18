@@ -1,4 +1,4 @@
-# todo
+# todo service
 HTTP API сервис для менеджера задач
 
 Стек: Java, Spring Boot, Maven, PostgreSQL.
