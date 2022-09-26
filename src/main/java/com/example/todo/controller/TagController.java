@@ -3,7 +3,6 @@ package com.example.todo.controller;
 
 import com.example.todo.model.Tag;
 import com.example.todo.repository.TagRepository;
-import com.example.todo.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,22 +11,28 @@ public class TagController {
 
     @Autowired
     private TagRepository tagRepository;
-    @Autowired
-    private TaskRepository taskRepository;
 
-    /**добавить/изменить тег
-     * Создает тег
+    /**
+     * добавить/изменить тег
+     * Если уже существует тег, с указанным ID, то меняется его имя на указанное
+     * В противном случае, создается новый тег
+     *
      * @param tag тег, который необходимо создать
      * @return созданный тег
      */
     @PostMapping("/tag")
     public Tag create(@RequestBody Tag tag) {
-        return tagRepository.save(tag);
+        if (tag.getTag_id() != null) { // Изменяем существующий тег
+            Tag t = tagRepository.findById(tag.getTag_id()).orElse(tag);
+            if (!t.equals(tag)) t.setTag_name(tag.getTag_name());
+            return tagRepository.save(t);
+        } else return tagRepository.save(tag); // Создаем новый тег
     }
 
     /**
      * Удаляет тег со всеми прикрепленными к нему задачами
-     * @param id  ид тега для удаления
+     *
+     * @param id ид тега для удаления
      */
     @DeleteMapping("/tag/{id}")
     public void delete(@PathVariable Long id) {
@@ -36,9 +41,10 @@ public class TagController {
 
     /**
      * Получает один тег по УИД и все его задачи
+     *
      * @param id УИД искомого тега
      * @return Найденный тег
-     * @exception IllegalArgumentException В случае, если тег с таким УИД не найден в базе
+     * @throws IllegalArgumentException В случае, если тег с таким УИД не найден в базе
      */
     @GetMapping("/tag/{id}")
     public Tag byTagId(@PathVariable Long id) {
