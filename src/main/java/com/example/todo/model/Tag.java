@@ -1,6 +1,7 @@
 package com.example.todo.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -9,6 +10,7 @@ import java.util.List;
 
 
 @Data
+@NoArgsConstructor
 @Entity
 public class Tag {
     @Id
@@ -21,4 +23,12 @@ public class Tag {
     @JoinColumn (name="task_tag")
     private List<Task> tasks;
 
+    public Tag(String tag_name) {
+        this.tag_name = tag_name;
+    }
+
+    public Tag(Long tag_id, String tag_name) {
+        this.tag_id = tag_id;
+        this.tag_name = tag_name;
+    }
 }
