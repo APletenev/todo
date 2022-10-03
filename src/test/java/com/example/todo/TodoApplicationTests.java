@@ -32,7 +32,7 @@ class TodoApplicationTests {
                 .consumeWith(System.out::println)
                 .returnResult().getResponseBody();
 
-        assertEquals(tag.getTag_name(),result.getTag_name());
+        assertEquals(tag.getTag_name(), result.getTag_name());
         return result;
     }
 
@@ -48,15 +48,15 @@ class TodoApplicationTests {
                 .consumeWith(System.out::println)
                 .returnResult().getResponseBody();
 
-        assertEquals(task.getTask_name(),result.getTask_name());
-        assertEquals(task.getTask_desc(),result.getTask_desc());
-        assertEquals(task.getTask_date(),result.getTask_date());
+        assertEquals(task.getTask_name(), result.getTask_name());
+        assertEquals(task.getTask_desc(), result.getTask_desc());
+        assertEquals(task.getTask_date(), result.getTask_date());
         return result;
 
     }
 
-    void checkTasksCount (int count) {
-        this.webTestClient
+    void checkTasksCount(int count) {
+        webTestClient
                 .get()
                 .uri("/tasks")
                 .exchange()
@@ -66,29 +66,8 @@ class TodoApplicationTests {
                 .hasSize(count)
                 .consumeWith(System.out::println);
     }
-    @Test
-    void contextLoads() {
-    }
 
-    @Test
-    // Проверяем, что нельзя создать пустой тег
-    public void checkEmptyTagCreation() {
-            Tag tag0 = new Tag();
-            webTestClient
-                    .post()
-                    .uri("/tag")
-                    .bodyValue(tag0)
-                    .exchange()
-                    .expectStatus().is5xxServerError()
-                    .expectHeader().contentType(MediaType.APPLICATION_JSON)
-                    .expectBody(Tag.class)
-                    .consumeWith(System.out::println);
-    }
-
-    @Test
-    void integrationTests() throws Exception {
-
-//      Проверяем, что имеем дело с пустой базой и контроллер возвращает пустой список задач
+    void checkNoTasks() {
         webTestClient
                 .get()
                 .uri("/tasks")
@@ -98,6 +77,32 @@ class TodoApplicationTests {
                 .expectBody()
                 .json("[]")
                 .consumeWith(System.out::println);
+    }
+
+    @Test
+    void contextLoads() {
+    }
+
+    @Test
+    // Проверяем, что нельзя создать пустой тег
+    public void checkEmptyTagCreation() {
+        Tag tag0 = new Tag();
+        webTestClient
+                .post()
+                .uri("/tag")
+                .bodyValue(tag0)
+                .exchange()
+                .expectStatus().is5xxServerError()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(Tag.class)
+                .consumeWith(System.out::println);
+    }
+
+    @Test
+    void integrationTests() throws Exception {
+
+//      Проверяем, что имеем дело с пустой базой и контроллер возвращает пустой список задач
+        checkNoTasks();
 
 
         // Создаем тег1
@@ -130,7 +135,7 @@ class TodoApplicationTests {
 
         // Создаем задачу 3 с привязкой к тегу 2
         Task task3 = new Task("Задача 3", "Описание задачи 3", LocalDate.now(), tag2.getTag_id());
-        createTaskTest(task3);
+        task3 = createTaskTest(task3);
 
 //      Проверяем, что контроллер возвращает список из 3 задач
         checkTasksCount(3);
@@ -140,10 +145,10 @@ class TodoApplicationTests {
         Task newtask2 = createTaskTest(task2);
 
 //      Проверяем что имя второй задачи изменилось
-        assertEquals(task2.getTask_name(),newtask2.getTask_name());
+        assertEquals(task2.getTask_name(), newtask2.getTask_name());
 
 //      Проверяем что ID второй задачи не изменился
-        assertEquals(task2.getTask_id(),newtask2.getTask_id());
+        assertEquals(task2.getTask_id(), newtask2.getTask_id());
 
 //      Проверяем, что количество задач не изменилось
         checkTasksCount(3);
@@ -153,21 +158,61 @@ class TodoApplicationTests {
         Tag newtag2 = createTagTest(tag2);
 
 //      Проверяем что ID второго тега не изменился
-        assertEquals(tag2.getTag_id(),newtag2.getTag_id());
+        assertEquals(tag2.getTag_id(), newtag2.getTag_id());
 
-//      Получаем тег2 по УИД и все его задачи
+//      Проверяем, что не работает получение тега с несущестуующим УИД
         webTestClient
                 .get()
-                .uri("/tag/2")
+                .uri("/tag/0")
+                .exchange()
+                .expectStatus().is5xxServerError()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .consumeWith(System.out::println);
+
+//      Получаем тег2 по УИД и все его задачи
+        tag2 = webTestClient
+                .get()
+                .uri("/tag/"+newtag2.getTag_id())
                 .exchange()
                 .expectStatus().is2xxSuccessful()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(Tag.class)
+                .consumeWith(System.out::println)
+                .returnResult().getResponseBody();
+
+//      Проверяем, что у тега2 есть 2 задачи
+        assertEquals(tag2.getTasks().size(), 2);
+
+//      Проверяем задачи тега
+        assertEquals(tag2.getTasks().get(0), newtask2);
+        assertEquals(tag2.getTasks().get(1), task3);
+
+//      Проверяем возможность каскадно удалить тег со всеми прикрепленными к нему задачами
+        webTestClient
+                .delete()
+                .uri("/tag/"+newtag2.getTag_id())
+                .exchange()
+                .expectStatus().is2xxSuccessful()
                 .expectBody()
-//                .json("[]")
                 .consumeWith(System.out::println);
+
+//      Убеждаемся, что осталась только одна задача
+        checkTasksCount(1);
+
+//      Удаляем задачу по УИД
+        webTestClient
+                .delete()
+                .uri("/task/"+task1.getTask_id())
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody()
+                .consumeWith(System.out::println);
+
+//      Проверяем, что больше нет ни одной задачи
+        checkNoTasks();
 
     }
 
-    //      Проверить, что не работает с несущестуующим УИД
 
 }
