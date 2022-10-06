@@ -99,6 +99,20 @@ class TodoApplicationTests {
     }
 
     @Test
+    // Проверяем, что нельзя создать задачу с несуществующим тегом
+    public void taskWithEmptyTagCreationTest() {
+        Task task0 = new Task("Имя задачи", "Задача с несуществующим тегом", LocalDate.now(), 0L);
+        webTestClient
+                .post()
+                .uri("/task")
+                .bodyValue(task0)
+                .exchange()
+                .expectStatus().is5xxServerError()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(Task.class)
+                .consumeWith(System.out::println);
+    }
+    @Test
     void integrationTests() throws Exception {
 
 //      Проверяем, что имеем дело с пустой базой и контроллер возвращает пустой список задач
