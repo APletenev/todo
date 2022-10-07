@@ -84,7 +84,7 @@ class TodoApplicationTests {
     }
 
     @Test
-    // Проверяем, что нельзя создать пустой тег
+    // Проверяем, что нельзя создать тег с пустым именем
     public void checkEmptyTagCreation() {
         Tag tag0 = new Tag();
         webTestClient
@@ -92,7 +92,7 @@ class TodoApplicationTests {
                 .uri("/tag")
                 .bodyValue(tag0)
                 .exchange()
-                .expectStatus().is5xxServerError()
+                .expectStatus().isBadRequest()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(Tag.class)
                 .consumeWith(System.out::println);
@@ -100,8 +100,8 @@ class TodoApplicationTests {
 
     @Test
     // Проверяем, что нельзя создать задачу с несуществующим тегом
-    public void taskWithEmptyTagCreationTest() {
-        Task task0 = new Task("Имя задачи", "Задача с несуществующим тегом", LocalDate.now(), 0L);
+    public void taskCreationWithNotExistingTagTest() {
+        Task task0 = new Task("Название задачи", "Задача с несуществующим тегом", LocalDate.now(), 0L);
         webTestClient
                 .post()
                 .uri("/task")
@@ -112,6 +112,9 @@ class TodoApplicationTests {
                 .expectBody(Task.class)
                 .consumeWith(System.out::println);
     }
+
+    //      TODO Проверить удаление несуществующего тега
+
     @Test
     void integrationTests() throws Exception {
 
@@ -134,7 +137,8 @@ class TodoApplicationTests {
                 .uri("/task")
                 .bodyValue(task0)
                 .exchange()
-                .expectStatus().is5xxServerError()
+                .expectStatus().isBadRequest()
+//                .expectStatus().is5xxServerError()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(Task.class)
                 .consumeWith(System.out::println);
@@ -201,6 +205,7 @@ class TodoApplicationTests {
 //      Проверяем задачи тега
         assertEquals(tag2.getTasks().get(0), newtask2);
         assertEquals(tag2.getTasks().get(1), task3);
+
 
 //      Проверяем возможность каскадно удалить тег со всеми прикрепленными к нему задачами
         webTestClient

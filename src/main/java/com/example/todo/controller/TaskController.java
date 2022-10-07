@@ -5,6 +5,8 @@ import com.example.todo.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 
 @RestController
 public class TaskController {
@@ -18,7 +20,7 @@ public class TaskController {
      * @return Задача, которая сохранена в репозиторий
      */
     @PostMapping("/task")
-    public Task create(@RequestBody Task task) {
+    public Task create(@RequestBody @Valid Task task) {
         return taskRepository.save(task);
     }
 

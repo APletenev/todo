@@ -7,8 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
@@ -19,9 +18,11 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long task_id;
     @NotBlank
-    @NotEmpty
+    @Size(min = 3, max = 50)
     private String task_name;
+    @NotNull
     private String task_desc;
+    @FutureOrPresent
     private LocalDate task_date;
     private Long task_tag;
 

@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 
@@ -17,7 +17,7 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tag_id;
     @NotBlank
-    @NotEmpty
+    @Size(min = 3, max = 50)
     private String tag_name;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn (name="task_tag")

@@ -6,6 +6,8 @@ import com.example.todo.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 public class TagController {
 
@@ -21,7 +23,7 @@ public class TagController {
      * @return созданный тег
      */
     @PostMapping("/tag")
-    public Tag create(@RequestBody Tag tag) {
+    public Tag create(@RequestBody @Valid Tag tag) {
         if (tag.getTag_id() != null) { // Изменяем существующий тег
             Tag t = tagRepository.findById(tag.getTag_id()).orElse(tag);
             if (!t.equals(tag)) t.setTag_name(tag.getTag_name());
