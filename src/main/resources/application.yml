@@ -35,5 +35,3 @@ spring:
     password: password
     enabled: true
     locations: "classpath:db/migration"
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect

@@ -1,5 +1,6 @@
 package com.example.todo.handler;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,9 +25,9 @@ public class RestExceptionHandler {
     }
 
 
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler({IllegalArgumentException.class, EmptyResultDataAccessException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> onIllegalArgumentException (IllegalArgumentException e) {
-        return Collections.singletonMap("Error", e.getLocalizedMessage());
+    public Map<String, String> onResourceNotFound (RuntimeException e) {
+        return Collections.singletonMap("Error", e.getMessage());
     }
 }

@@ -83,40 +83,10 @@ class TodoApplicationTests {
     void contextLoads() {
     }
 
-    @Test
-    // Проверяем, что нельзя создать тег с пустым именем
-    public void checkEmptyTagCreation() {
-        Tag tag0 = new Tag();
-        webTestClient
-                .post()
-                .uri("/tag")
-                .bodyValue(tag0)
-                .exchange()
-                .expectStatus().isBadRequest()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
-                .expectBody(Tag.class)
-                .consumeWith(System.out::println);
-    }
+
 
     @Test
-    // Проверяем, что нельзя создать задачу с несуществующим тегом
-    public void taskCreationWithNotExistingTagTest() {
-        Task task0 = new Task("Название задачи", "Задача с несуществующим тегом", LocalDate.now(), 0L);
-        webTestClient
-                .post()
-                .uri("/task")
-                .bodyValue(task0)
-                .exchange()
-                .expectStatus().is5xxServerError()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
-                .expectBody(Task.class)
-                .consumeWith(System.out::println);
-    }
-
-    //      TODO Проверить удаление несуществующего тега
-
-    @Test
-    void integrationTests() throws Exception {
+    void runIntegrationTests() throws Exception {
 
 //      Проверяем, что имеем дело с пустой базой и контроллер возвращает пустой список задач
         checkNoTasks();
@@ -138,7 +108,6 @@ class TodoApplicationTests {
                 .bodyValue(task0)
                 .exchange()
                 .expectStatus().isBadRequest()
-//                .expectStatus().is5xxServerError()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(Task.class)
                 .consumeWith(System.out::println);
@@ -183,7 +152,7 @@ class TodoApplicationTests {
                 .get()
                 .uri("/tag/0")
                 .exchange()
-                .expectStatus().is5xxServerError()
+                .expectStatus().is4xxClientError()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody()
                 .consumeWith(System.out::println);
