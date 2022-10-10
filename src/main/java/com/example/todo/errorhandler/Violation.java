@@ -1,4 +1,4 @@
-package com.example.todo.handler;
+package com.example.todo.errorhandler;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

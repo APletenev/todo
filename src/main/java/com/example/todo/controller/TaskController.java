@@ -1,14 +1,17 @@
 package com.example.todo.controller;
 
+import com.example.todo.Marker;
 import com.example.todo.model.Task;
 import com.example.todo.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 
 @RestController
+@Validated
 public class TaskController {
 
     @Autowired
@@ -20,6 +23,7 @@ public class TaskController {
      * @return Задача, которая сохранена в репозиторий
      */
     @PostMapping("/task")
+    @Validated({Marker.OnCreate.class})
     public Task create(@RequestBody @Valid Task task) {
         return taskRepository.save(task);
     }

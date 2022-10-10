@@ -1,5 +1,6 @@
 package com.example.todo.model;
 
+import com.example.todo.Marker;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,6 +25,8 @@ public class Task {
     private String task_desc;
     @FutureOrPresent
     private LocalDate task_date;
+    @NotNull(groups = Marker.OnCreate.class)
+//    Может быть null при удалении
     private Long task_tag;
 
     public Task(String task_name, String task_desc, LocalDate task_date, Long task_tag) {

@@ -33,6 +33,20 @@ public class TaskControllerTests {
     }
 
     @Test
+    // Проверяем, что нельзя создать задачу с пустым тегом
+    void createTaskWithNullTag() {
+        Task task0 = new Task("Название задачи", "Задача c пустым тегом", LocalDate.now(), null);
+        webTestClient
+                .post()
+                .uri("/task")
+                .bodyValue(task0)
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(Task.class)
+                .consumeWith(System.out::println);
+    }
+    @Test
         //      Проверяем удаление несуществующей задачи
     void deleteNotExistingTask () {
         webTestClient
