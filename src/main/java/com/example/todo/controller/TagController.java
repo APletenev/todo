@@ -50,7 +50,7 @@ public class TagController {
      */
     @GetMapping("/tag/{id}")
     public Tag byTagId(@PathVariable Long id) {
-        return tagRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("tag not found"));
+        return tagRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Тег не найден"));
     }
 
 

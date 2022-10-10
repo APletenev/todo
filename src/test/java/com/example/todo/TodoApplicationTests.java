@@ -147,15 +147,6 @@ class TodoApplicationTests {
 //      Проверяем что ID второго тега не изменился
         assertEquals(tag2.getTag_id(), newtag2.getTag_id());
 
-//      Проверяем, что не работает получение тега с несущестуующим УИД
-        webTestClient
-                .get()
-                .uri("/tag/0")
-                .exchange()
-                .expectStatus().is4xxClientError()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
-                .expectBody()
-                .consumeWith(System.out::println);
 
 //      Получаем тег2 по УИД и все его задачи
         tag2 = webTestClient

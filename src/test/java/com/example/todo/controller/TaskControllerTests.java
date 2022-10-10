@@ -26,7 +26,7 @@ public class TaskControllerTests {
                 .uri("/task")
                 .bodyValue(task0)
                 .exchange()
-                .expectStatus().is5xxServerError()
+                .expectStatus().is4xxClientError()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(Task.class)
                 .consumeWith(System.out::println);

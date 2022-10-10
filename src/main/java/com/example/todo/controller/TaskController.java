@@ -2,6 +2,7 @@ package com.example.todo.controller;
 
 import com.example.todo.Marker;
 import com.example.todo.model.Task;
+import com.example.todo.repository.TagRepository;
 import com.example.todo.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +17,8 @@ public class TaskController {
 
     @Autowired
     private TaskRepository taskRepository;
+    @Autowired
+    private TagRepository tagRepository;
 
     /**
      * Если задачи с таким же id не существует, создает задачу. Если задача с таким id уже существует, изменяет ее в соответствии с переданными значениями
@@ -25,6 +28,7 @@ public class TaskController {
     @PostMapping("/task")
     @Validated({Marker.OnCreate.class})
     public Task create(@RequestBody @Valid Task task) {
+        tagRepository.findById(task.getTask_tag()).orElseThrow(() -> new IllegalArgumentException("Не найден указанный в задаче тег"));
         return taskRepository.save(task);
     }
 

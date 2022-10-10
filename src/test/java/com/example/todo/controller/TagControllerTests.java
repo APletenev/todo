@@ -30,4 +30,17 @@ public class TagControllerTests {
                 .consumeWith(System.out::println);
     }
 
+    @Test
+    //      Проверяем, что не работает получение тега с несущестуующим УИД
+    void getNotExistingTag() {
+        webTestClient
+                .get()
+                .uri("/tag/0")
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .consumeWith(System.out::println);
+    }
+
 }
