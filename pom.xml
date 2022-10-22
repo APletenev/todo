@@ -33,6 +33,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <version>42.3.7</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -66,7 +67,10 @@
             <artifactId>flyway-core</artifactId>
             <version>8.5.12</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
