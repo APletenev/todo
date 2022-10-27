@@ -2,7 +2,7 @@ package com.example.todo.controller;
 
 
 import com.example.todo.model.Tag;
-import com.example.todo.repository.TagRepository;
+import com.example.todo.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +12,7 @@ import javax.validation.Valid;
 public class TagController {
 
     @Autowired
-    private TagRepository tagRepository;
+    private TagService tagService;
 
     /**
      * добавить/изменить тег
@@ -24,11 +24,7 @@ public class TagController {
      */
     @PostMapping("/tag")
     public Tag create(@RequestBody @Valid Tag tag) {
-        if (tag.getTag_id() != null) { // Изменяем существующий тег
-            Tag t = tagRepository.findById(tag.getTag_id()).orElse(tag);
-            if (!t.equals(tag)) t.setTag_name(tag.getTag_name());
-            return tagRepository.save(t);
-        } else return tagRepository.save(tag); // Создаем новый тег
+        return tagService.createChangeTag(tag);
     }
 
     /**
@@ -38,7 +34,7 @@ public class TagController {
      */
     @DeleteMapping("/tag/{id}")
     public void delete(@PathVariable Long id) {
-        tagRepository.deleteById(id);
+        tagService.deleteTagById(id);
     }
 
     /**
@@ -50,7 +46,7 @@ public class TagController {
      */
     @GetMapping("/tag/{id}")
     public Tag byTagId(@PathVariable Long id) {
-        return tagRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Тег не найден"));
+        return tagService.getTagById(id);
     }
 
 

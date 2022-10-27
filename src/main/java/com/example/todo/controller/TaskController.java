@@ -2,8 +2,7 @@ package com.example.todo.controller;
 
 import com.example.todo.Marker;
 import com.example.todo.model.Task;
-import com.example.todo.repository.TagRepository;
-import com.example.todo.repository.TaskRepository;
+import com.example.todo.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +15,7 @@ import javax.validation.Valid;
 public class TaskController {
 
     @Autowired
-    private TaskRepository taskRepository;
-    @Autowired
-    private TagRepository tagRepository;
+    private TaskService taskService;
 
     /**
      * Если задачи с таким же id не существует, создает задачу. Если задача с таким id уже существует, изменяет ее в соответствии с переданными значениями
@@ -28,8 +25,7 @@ public class TaskController {
     @PostMapping("/task")
     @Validated({Marker.OnCreate.class})
     public Task create(@RequestBody @Valid Task task) {
-        tagRepository.findById(task.getTask_tag()).orElseThrow(() -> new IllegalArgumentException("Не найден указанный в задаче тег"));
-        return taskRepository.save(task);
+        return taskService.createChangeTask(task);
     }
 
     /**
@@ -38,7 +34,7 @@ public class TaskController {
      */
     @GetMapping("/tasks")
     public Iterable<Task> get() {//получить все записи
-        return taskRepository.findAll();
+        return taskService.getAllTasks();
     }
 
     /** Удаляет задачу  по id
@@ -46,6 +42,6 @@ public class TaskController {
      */
     @DeleteMapping("/task/{id}")
     public void delete(@PathVariable Long id) {
-        taskRepository.deleteById(id);
+        taskService.deleteTaskById(id);
     }
 }
