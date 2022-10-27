@@ -13,6 +13,8 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    static final String EditorRole = "EDITOR";
+
     @Autowired
     DataSource dataSource;
 
@@ -31,7 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .antMatchers(HttpMethod.GET,"/tag/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/tasks").permitAll()
-                .antMatchers("/**").hasRole("EDITOR")
+                .antMatchers("/**").hasRole(EditorRole)
                 .and().formLogin().permitAll()
                 .and().httpBasic();
         return http.build();
