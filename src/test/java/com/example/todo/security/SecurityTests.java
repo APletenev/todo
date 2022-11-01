@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TodoApplication.class)
 @WebAppConfiguration
-@ActiveProfiles("test")
+@ActiveProfiles("security_test")
 class SecurityTests {
 
     @Autowired
@@ -50,7 +50,8 @@ class SecurityTests {
     @Test
     void notAuthenticatedGetTasksShouldOk() throws Exception {
         mvc
-                .perform(get("/tasks"))
+                .perform(get("/tasks")
+                        .secure(true))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk());
     }
@@ -58,9 +59,18 @@ class SecurityTests {
     @Test
     void notAuthenticatedGetTagShould404() throws Exception {
         mvc
-                .perform(get("/tag/0"))
+                .perform(get("/tag/0")
+                        .secure(true))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void notHttpsGetTasksShould302() throws Exception {
+        mvc
+                .perform(get("/tasks"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isFound());
     }
 
     @Test
@@ -68,6 +78,7 @@ class SecurityTests {
         Tag tag = new Tag("test");
         mvc
                 .perform(post("/tag")
+                        .secure(true)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(tag))
                         .accept(MediaType.APPLICATION_JSON))
@@ -81,6 +92,7 @@ class SecurityTests {
         Tag tag = new Tag("test");
         mvc
                 .perform(post("/tag")
+                        .secure(true)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(tag))
                         .accept(MediaType.APPLICATION_JSON))
@@ -93,6 +105,7 @@ class SecurityTests {
         Tag tag = new Tag("test");
         mvc
                 .perform(post("/tag")
+                        .secure(true)
                         .with(httpBasic("not_existing_user", "not_existing_password"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(tag))
@@ -106,6 +119,7 @@ class SecurityTests {
         Task task = new Task();
         mvc
                 .perform(post("/task")
+                        .secure(true)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(task))
                         .accept(MediaType.APPLICATION_JSON))
@@ -119,6 +133,7 @@ class SecurityTests {
         Task task = new Task();
         mvc
                 .perform(post("/task")
+                        .secure(true)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(task))
                         .accept(MediaType.APPLICATION_JSON))
@@ -129,7 +144,8 @@ class SecurityTests {
     @Test
     void notAuthenticatedDeleteTagShould401() throws Exception {
         mvc
-                .perform(delete("/tag/0"))
+                .perform(delete("/tag/0")
+                        .secure(true))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isUnauthorized());
     }
@@ -138,7 +154,8 @@ class SecurityTests {
     @WithMockUser(roles = EditorRole)
     void authenticatedDeleteTagShould404() throws Exception {
         mvc
-                .perform(delete("/tag/0"))
+                .perform(delete("/tag/0")
+                        .secure(true))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isNotFound());
     }

@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: test
+    active: prod
 ---
 spring:
   config:
@@ -18,12 +18,20 @@ spring:
     password: Vfj6di
     enabled: true
     locations: "classpath:db/migration"
+server:
+  ssl:
+    key-store: src/main/resources/springboot.p12
+    key-store-password: 9cgYQ4
+    key-store-type: pkcs12
+    key-alias: testkey
+    key-password: 9cgYQ4
+  port: 8443
 
 ---
 spring:
   config:
     activate:
-      on-profile: test
+      on-profile: security_test
 
   datasource:
     url: jdbc:h2:mem:mydb
@@ -36,6 +44,14 @@ spring:
     password: password
     enabled: true
     locations: "classpath:db/migration"
+server:
+  ssl:
+    key-store: src/main/resources/springboot.p12
+    key-store-password: 9cgYQ4
+    key-store-type: pkcs12
+    key-alias: testkey
+    key-password: 9cgYQ4
+  port: 8443
 ---
 spring:
   config:
