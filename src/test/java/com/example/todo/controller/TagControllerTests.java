@@ -19,6 +19,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -71,14 +73,39 @@ public class TagControllerTests {
     @Test
         //      Проверяем, что работает кэширование запроса Get tag by ID
     void GetTagCachingTest() {
-        when(tagRepository.findById(eq(1L)))
-                .thenReturn(Optional.of(new Tag("cached")));
-        Tag tag1 = tagService.getTagById(1L);
-        Tag tag2 = tagService.getTagById(1L);
 
-        verify(tagRepository,times(1)).findById(Mockito.any());
+        when(tagRepository.findById(Mockito.any()))
+                .thenAnswer(i -> Optional.of(new Tag(1L, "cached")));
+        when(tagRepository.save(Mockito.any()))
+                .then(returnsFirstArg());
+
+        Tag tagFromService = tagService.getTagById(1L);
+        Tag tagFromCache = tagService.getTagById(1L);
+
+        //Запрос вызывался только один раз
+        verify(tagRepository, times(1)).findById(Mockito.any());
+
+        tagService.deleteTagById(1L); //Очищается кэш
+
+        Tag tagBeforeUpdate = tagService.getTagById(1L);
+
+        //Запрос вызван второй раз
+        verify(tagRepository, times(2)).findById(Mockito.any());
+
+        Tag tagUpdated = tagService.createChangeTag(new Tag(1L, "updated"));
+
+        //Запрос вызван третий раз (внутри createChangeTag)
+        verify(tagRepository, times(3)).findById(Mockito.any());
+
+        Tag tagCached = tagService.getTagById(1L);
+
+        //Запрос больше не вызывался
+        verify(tagRepository, times(3)).findById(Mockito.any());
+
+        // Из кэша был получен обновленный тег
+        assertEquals(tagUpdated, tagCached);
+
     }
-
 
 
 }
