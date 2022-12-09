@@ -2,7 +2,7 @@ package com.example.todo.controller;
 
 
 import com.example.todo.model.Tag;
-import com.example.todo.service.TagService;
+import com.example.todo.service.TagServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +12,7 @@ import javax.validation.Valid;
 public class TagController {
 
     @Autowired
-    private TagService tagService;
+    private TagServiceImpl tagService;
 
     /**
      * добавить/изменить тег
@@ -32,6 +32,7 @@ public class TagController {
      *
      * @param id ид тега для удаления
      */
+
     @DeleteMapping("/tag/{id}")
     public void delete(@PathVariable Long id) {
         tagService.deleteTagById(id);
@@ -44,6 +45,7 @@ public class TagController {
      * @return Найденный тег
      * @throws IllegalArgumentException В случае, если тег с таким УИД не найден в базе
      */
+
     @GetMapping("/tag/{id}")
     public Tag byTagId(@PathVariable Long id) {
         return tagService.getTagById(id);
