@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 
 @Configuration
-@Profile("nosecurity_test")
+@Profile({"dev","nosecurity_test", "nosecurity_test_postgres"})
 public class NoSecurityConfig {
 
     @Bean

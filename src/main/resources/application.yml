@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod
+    active: dev
 ---
 spring:
   config:
@@ -52,20 +52,52 @@ server:
     key-alias: testkey
     key-password: 9cgYQ4
   port: 8443
+
+
 ---
 spring:
   config:
     activate:
-      on-profile: nosecurity_test
+      on-profile: dev, nosecurity_test
 
   datasource:
-    url: jdbc:h2:mem:mydb
+#    url: jdbc:h2:mem:mydb;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1;
+    url: jdbc:h2:file:./mydb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;AUTO_SERVER=TRUE
     username: sa
     password: password
     driverClassName: org.h2.Driver
   flyway:
-    url: jdbc:h2:mem:mydb
+#    url: jdbc:h2:mem:mydb;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1;
+    url: jdbc:h2:file:./mydb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
     user: sa
     password: password
     enabled: true
     locations: "classpath:db/migration"
+#  jpa:
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: nosecurity_test_postgres
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/todo?characterEncoding=utf8
+    username: postgres
+    password: Vfj6di
+  flyway:
+    url: jdbc:postgresql://localhost:5432/todo?characterEncoding=utf8
+    user: postgres
+    password: Vfj6di
+    enabled: true
+    locations: "classpath:db/migration"
+#  jpa:
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
