@@ -1,5 +1,6 @@
 package com.example.todo.controller;
 
+import com.example.todo.model.Tag;
 import com.example.todo.model.Task;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,8 @@ public class TaskControllerTests {
     @Test
         // Проверяем, что нельзя создать задачу с несуществующим тегом
     void createTaskWithNotExistingTag() {
-        Task task0 = new Task("Название задачи", "Задача с несуществующим тегом", LocalDate.now(), 0L);
+        Tag notExistingTag = new Tag(0L,"Несуществующий тег");
+        Task task0 = new Task("Название задачи", "Задача с несуществующим тегом", LocalDate.now(), notExistingTag);
         webTestClient
                 .post()
                 .uri("/task")
@@ -35,7 +37,7 @@ public class TaskControllerTests {
     }
 
     @Test
-    // Проверяем, что нельзя создать задачу с пустым тегом
+        // Проверяем, что нельзя создать задачу с пустым тегом
     void createTaskWithNullTag() {
         Task task0 = new Task("Название задачи", "Задача c пустым тегом", LocalDate.now(), null);
         webTestClient
@@ -48,9 +50,10 @@ public class TaskControllerTests {
                 .expectBody(Task.class)
                 .consumeWith(System.out::println);
     }
+
     @Test
         //      Проверяем удаление несуществующей задачи
-    void deleteNotExistingTask () {
+    void deleteNotExistingTask() {
         webTestClient
                 .delete()
                 .uri("/task/0")
@@ -62,4 +65,5 @@ public class TaskControllerTests {
 
         // TODO проверить ответ на некорректную строку запроса
     }
+
 }

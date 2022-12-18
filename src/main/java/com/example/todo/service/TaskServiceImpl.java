@@ -16,7 +16,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task createChangeTask(Task task) {
-        tagRepository.findById(task.getTask_tag()).orElseThrow(() -> new IllegalArgumentException("Не найден указанный в задаче тег"));
+        tagRepository.findById(task.getTask_tag().getTag_id()).orElseThrow(() -> new IllegalArgumentException("Не найден указанный в задаче тег"));
         return taskRepository.save(task);
     }
 
@@ -28,5 +28,10 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Iterable<Task> getAllTasks() {
         return taskRepository.findAll();
+    }
+
+    @Override
+    public Task getTaskById(Long id) {
+        return taskRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Не найдена задача с id="+id));
     }
 }

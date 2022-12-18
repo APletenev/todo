@@ -2,6 +2,7 @@ package com.example.todo;
 
 import com.example.todo.model.Tag;
 import com.example.todo.model.Task;
+import com.example.todo.service.TaskService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -12,7 +13,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @SpringBootTest (webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -26,6 +28,9 @@ class TodoApplicationTests {
 
     @Autowired
     private WebTestClient webTestClient;
+
+    @Autowired
+    TaskService taskService;
 
     Tag createTagTest(Tag tag) {
         Tag result = webTestClient
@@ -97,7 +102,6 @@ class TodoApplicationTests {
         System.out.println(BLUE + "Проверяем, что имеем дело с пустой базой и контроллер возвращает пустой список задач"+RESET);
         checkNoTasks();
 
-
         System.out.println(BLUE + "Создаем тег1"+RESET);
 
         Tag tag1 = new Tag("home");
@@ -108,7 +112,7 @@ class TodoApplicationTests {
         tag2 = createTagTest(tag2);
 
         System.out.println(BLUE + "Проверить, что нельзя создать задачу без имени"+RESET);
-        Task task0 = new Task("", "Задача без имени", LocalDate.now(), tag1.getTag_id());
+        Task task0 = new Task("", "Задача без имени", LocalDate.now(), tag1);
         webTestClient
                 .post()
                 .uri("/task")
@@ -120,15 +124,15 @@ class TodoApplicationTests {
                 .consumeWith(System.out::println);
 
         System.out.println(BLUE + "Создаем задачу 1 с привязкой к тегу 1"+RESET);
-        Task task1 = new Task("Задача 1", "Описание задачи 1", LocalDate.now(), tag1.getTag_id());
+        Task task1 = new Task("Задача 1", "Описание задачи 1", LocalDate.now(), tag1);
         task1 = createTaskTest(task1);
 
         System.out.println(BLUE + "Создаем задачу 2 с привязкой к тегу 2"+RESET);
-        Task task2 = new Task("Задача 2", "Описание задачи 2", LocalDate.now(), tag2.getTag_id());
+        Task task2 = new Task("Задача 2", "Описание задачи 2", LocalDate.now(), tag2);
         task2 = createTaskTest(task2);
 
         System.out.println(BLUE + "Создаем задачу 3 с привязкой к тегу 2"+RESET);
-        Task task3 = new Task("Задача 3", "Описание задачи 3", LocalDate.now(), tag2.getTag_id());
+        Task task3 = new Task("Задача 3", "Описание задачи 3", LocalDate.now(), tag2);
         task3 = createTaskTest(task3);
 
         System.out.println(BLUE + "Проверяем, что контроллер возвращает список из 3 задач"+RESET);
@@ -169,8 +173,11 @@ class TodoApplicationTests {
         assertEquals(tag2.getTasks().size(), 2);
 
         System.out.println(BLUE + "Проверяем задачи тега"+RESET);
-        assertTrue(tag2.getTasks().contains(newtask2));
+
+        newtask2 = taskService.getTaskById(newtask2.getTask_id());
+        task3 = taskService.getTaskById(task3.getTask_id());
         assertTrue(tag2.getTasks().contains(task3));
+        assertTrue(tag2.getTasks().contains(newtask2));
 
         System.out.println(BLUE + "Проверяем возможность каскадно удалить тег со всеми прикрепленными к нему задачами"+RESET);
         webTestClient

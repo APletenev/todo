@@ -7,4 +7,6 @@ public interface TaskService {
     void deleteTaskById (Long id);
 
     Iterable<Task> getAllTasks ();
+
+    Task getTaskById(Long id);
 }
