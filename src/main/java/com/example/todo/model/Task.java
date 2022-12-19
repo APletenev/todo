@@ -3,6 +3,7 @@ package com.example.todo.model;
 import com.example.todo.Marker;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.FutureOrPresent;
@@ -25,6 +26,9 @@ public class Task {
     private String task_desc;
     @FutureOrPresent
     private LocalDate task_date;
+
+    @Type(type="org.hibernate.type.BinaryType")
+    byte[] task_file;
     @NotNull(groups = Marker.OnCreate.class)
 //    Может быть null при удалении
     @ManyToOne

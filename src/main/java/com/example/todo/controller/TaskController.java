@@ -6,6 +6,9 @@ import com.example.todo.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 
 @RestController
@@ -40,5 +43,19 @@ public class TaskController {
     @DeleteMapping("/task/{id}")
     public void delete(@PathVariable Long id) {
         taskService.deleteTaskById(id);
+    }
+
+    /** Загружает файл-вложение к задаче
+     * @param id УИД задачи, к которой требуется добавить файл
+     * @param file файл для добавления
+     * @return Задача, после операции
+     * @throws IOException для file.getBytes()
+     */
+    @PostMapping("/task/{id}/upload")
+    Task uploadFile(@PathVariable Long id, @RequestParam MultipartFile file) throws IOException {
+        Task task = taskService.getTaskById(id);
+        task.setTask_file(file.getBytes());
+        return taskService.createChangeTask(task);
+
     }
 }

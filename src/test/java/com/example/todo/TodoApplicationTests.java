@@ -6,19 +6,25 @@ import com.example.todo.service.TaskService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @SpringBootTest (webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient(timeout = "36000")
+@AutoConfigureMockMvc
 @ActiveProfiles("nosecurity_test")
 class TodoApplicationTests {
 
@@ -31,6 +37,9 @@ class TodoApplicationTests {
 
     @Autowired
     TaskService taskService;
+
+    @Autowired
+    private MockMvc mvc;
 
     Tag createTagTest(Tag tag) {
         Tag result = webTestClient
@@ -140,28 +149,28 @@ class TodoApplicationTests {
 
         System.out.println(BLUE + "Изменяем имя второй задачи"+RESET);
         task2.setTask_name("Новая задача 2");
-        Task newtask2 = createTaskTest(task2);
+        Task newTask2 = createTaskTest(task2);
 
         System.out.println(BLUE + "Проверяем что имя второй задачи изменилось"+RESET);
-        assertEquals(task2.getTask_name(), newtask2.getTask_name());
+        assertEquals(task2.getTask_name(), newTask2.getTask_name());
 
         System.out.println(BLUE + "Проверяем что ID второй задачи не изменился"+RESET);
-        assertEquals(task2.getTask_id(), newtask2.getTask_id());
+        assertEquals(task2.getTask_id(), newTask2.getTask_id());
 
         System.out.println(BLUE + "Проверяем, что количество задач не изменилось"+RESET);
         checkTasksCount(3);
 
         System.out.println(BLUE + "Меняем название тега2"+RESET);
         tag2.setTag_name("business");
-        Tag newtag2 = createTagTest(tag2);
+        Tag newTag2 = createTagTest(tag2);
 
         System.out.println(BLUE + "Проверяем что ID второго тега не изменился"+RESET);
-        assertEquals(tag2.getTag_id(), newtag2.getTag_id());
+        assertEquals(tag2.getTag_id(), newTag2.getTag_id());
 
         System.out.println(BLUE + "Получаем тег2 по УИД и все его задачи"+RESET);
         tag2 = webTestClient
                 .get()
-                .uri("/tag/" + newtag2.getTag_id())
+                .uri("/tag/" + newTag2.getTag_id())
                 .exchange()
                 .expectStatus().is2xxSuccessful()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
@@ -174,15 +183,28 @@ class TodoApplicationTests {
 
         System.out.println(BLUE + "Проверяем задачи тега"+RESET);
 
-        newtask2 = taskService.getTaskById(newtask2.getTask_id());
+        newTask2 = taskService.getTaskById(newTask2.getTask_id());
         task3 = taskService.getTaskById(task3.getTask_id());
         assertTrue(tag2.getTasks().contains(task3));
-        assertTrue(tag2.getTasks().contains(newtask2));
+        assertTrue(tag2.getTasks().contains(newTask2));
+
+        System.out.println(BLUE + "Проверяем добавление файла к задаче"+RESET);
+
+        final byte[] testFile = "Test File".getBytes();
+        MockMultipartFile multipartFile = new MockMultipartFile("file", "test.txt",
+                "text/plain", testFile);
+        mvc.perform(multipart("/task/"+task3.getTask_id()+"/upload").file(multipartFile))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk());
+
+        task3 = taskService.getTaskById(task3.getTask_id());
+
+        assertArrayEquals(task3.getTask_file(),testFile);
 
         System.out.println(BLUE + "Проверяем возможность каскадно удалить тег со всеми прикрепленными к нему задачами"+RESET);
         webTestClient
                 .delete()
-                .uri("/tag/" + newtag2.getTag_id())
+                .uri("/tag/" + newTag2.getTag_id())
                 .exchange()
                 .expectStatus().is2xxSuccessful()
                 .expectBody()
