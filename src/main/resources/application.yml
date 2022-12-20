@@ -18,6 +18,10 @@ spring:
     password: Vfj6di
     enabled: true
     locations: "classpath:db/migration"
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 server:
   ssl:
     key-store: src/main/resources/springboot.p12
@@ -73,6 +77,10 @@ spring:
     password: password
     enabled: true
     locations: "classpath:db/migration"
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 #  jpa:
 #    show-sql: true
 #    properties:
@@ -96,6 +104,10 @@ spring:
     password: Vfj6di
     enabled: true
     locations: "classpath:db/migration"
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 #  jpa:
 #    show-sql: true
 #    properties:
