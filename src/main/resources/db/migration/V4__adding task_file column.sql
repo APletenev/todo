@@ -1,2 +1,2 @@
-alter table TASK
-    add TASK_FILE BYTEA;
+ALTER TABLE task
+    ADD task_file bytea;

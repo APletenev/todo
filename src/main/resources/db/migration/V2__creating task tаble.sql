@@ -1,17 +1,17 @@
-create table task
+CREATE TABLE task
 (
     task_id   bigserial,
-    task_name text      not null,
+    task_name text      NOT NULL,
     task_desc text,
     task_date date,
-    task_tag  bigserial not null
-        constraint task_tag
-            references tag (tag_id) ON DELETE CASCADE
+    task_tag  bigserial NOT NULL
+        CONSTRAINT task_tag
+            REFERENCES tag (tag_id) ON DELETE CASCADE
 );
 
-create unique index task_task_id_uindex
-    on task (task_id);
+CREATE UNIQUE INDEX task_task_id_uindex
+    ON task (task_id);
 
-alter table task
-    add constraint task_pk
-        primary key (task_id);
+ALTER TABLE task
+    ADD CONSTRAINT task_pk
+        PRIMARY KEY (task_id);

@@ -1,14 +1,9 @@
-create table tag
+CREATE TABLE tag
 (
-    tag_id   bigserial
-        constraint tag_pk
-            primary key,
-    tag_name text not null
+    tag_id bigserial CONSTRAINT tag_pk PRIMARY KEY,
+    tag_name text NOT NULL
 );
 
-create unique index tag_tag_id_uindex
-    on tag (tag_id);
+CREATE UNIQUE INDEX tag_tag_id_uindex ON tag (tag_id);
 
-create unique index tag_tag_name_uindex
-    on tag (tag_name);
-
+CREATE UNIQUE INDEX tag_tag_name_uindex ON tag (tag_name);
