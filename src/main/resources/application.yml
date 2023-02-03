@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: prod
 ---
 spring:
   config:
@@ -9,13 +9,13 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/todo?characterEncoding=utf8
+    url: jdbc:postgresql://db:5432/todo?characterEncoding=utf8
     username: postgres
-    password: Vfj6di
+    password: postgrespw
   flyway:
-    url: jdbc:postgresql://localhost:5432/todo?characterEncoding=utf8
+    url: jdbc:postgresql://db:5432/todo?characterEncoding=utf8
     user: postgres
-    password: Vfj6di
+    password: postgrespw
     enabled: true
     locations: "classpath:db/migration"
   servlet:
@@ -24,7 +24,7 @@ spring:
       max-request-size: 5MB
 server:
   ssl:
-    key-store: src/main/resources/springboot.p12
+    key-store: classpath:springboot.p12
     key-store-password: 9cgYQ4
     key-store-type: pkcs12
     key-alias: testkey
@@ -97,11 +97,11 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/todo?characterEncoding=utf8
     username: postgres
-    password: Vfj6di
+    password: postgrespw
   flyway:
     url: jdbc:postgresql://localhost:5432/todo?characterEncoding=utf8
     user: postgres
-    password: Vfj6di
+    password: postgrespw
     enabled: true
     locations: "classpath:db/migration"
   servlet:
