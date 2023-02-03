@@ -1,27 +1,27 @@
 spring:
   profiles:
-    active: prod
----
-spring:
-  config:
-    activate:
-      on-profile: prod
+    active: dev
+    group:
+      dev:
+        - "h2"
+      prod:
+        - "secure"
+        - "pg_docker_compose"
+      security_test:
+        - "secure"
+        - "pg_local"
+      nosecurity_test:
+        - "pg_local"
 
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://db:5432/todo?characterEncoding=utf8
-    username: postgres
-    password: postgrespw
-  flyway:
-    url: jdbc:postgresql://db:5432/todo?characterEncoding=utf8
-    user: postgres
-    password: postgrespw
-    enabled: true
-    locations: "classpath:db/migration"
   servlet:
     multipart:
       max-file-size: 5MB
       max-request-size: 5MB
+---
+spring:
+  config:
+    activate:
+      on-profile: secure
 server:
   ssl:
     key-store: classpath:springboot.p12
@@ -35,34 +35,50 @@ server:
 spring:
   config:
     activate:
-      on-profile: security_test
+      on-profile: pg_local
 
   datasource:
-    url: jdbc:h2:mem:mydb
-    username: sa
-    password: password
-    driverClassName: org.h2.Driver
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/todo?characterEncoding=utf8
+    username: postgres
+    password: postgrespw
   flyway:
-    url: jdbc:h2:mem:mydb
-    user: sa
-    password: password
+    url: jdbc:postgresql://localhost:5432/todo?characterEncoding=utf8
+    user: postgres
+    password: postgrespw
     enabled: true
     locations: "classpath:db/migration"
-server:
-  ssl:
-    key-store: src/main/resources/springboot.p12
-    key-store-password: 9cgYQ4
-    key-store-type: pkcs12
-    key-alias: testkey
-    key-password: 9cgYQ4
-  port: 8443
+
+#  jpa:
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: pg_docker_compose
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://db:5432/todo?characterEncoding=utf8
+    username: postgres
+    password: postgrespw
+  flyway:
+    url: jdbc:postgresql://db:5432/todo?characterEncoding=utf8
+    user: postgres
+    password: postgrespw
+    enabled: true
+    locations: "classpath:db/migration"
 
 
 ---
 spring:
   config:
     activate:
-      on-profile: dev, nosecurity_test
+      on-profile: h2
 
   datasource:
 #    url: jdbc:h2:mem:mydb;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1;
@@ -77,39 +93,9 @@ spring:
     password: password
     enabled: true
     locations: "classpath:db/migration"
-  servlet:
-    multipart:
-      max-file-size: 5MB
-      max-request-size: 5MB
 #  jpa:
 #    show-sql: true
 #    properties:
 #      hibernate:
 #        format_sql: true
 
----
-spring:
-  config:
-    activate:
-      on-profile: nosecurity_test_postgres
-
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/todo?characterEncoding=utf8
-    username: postgres
-    password: postgrespw
-  flyway:
-    url: jdbc:postgresql://localhost:5432/todo?characterEncoding=utf8
-    user: postgres
-    password: postgrespw
-    enabled: true
-    locations: "classpath:db/migration"
-  servlet:
-    multipart:
-      max-file-size: 5MB
-      max-request-size: 5MB
-#  jpa:
-#    show-sql: true
-#    properties:
-#      hibernate:
-#        format_sql: true
