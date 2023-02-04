@@ -5,12 +5,9 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgrespw
       - POSTGRES_DB=todo
-    ports:
-      - "5432:5432"
   backend:
     image: apletenev/todo:1
     ports:
-      - "8080:8080"
       - "8443:8443"
     depends_on:
       - db
